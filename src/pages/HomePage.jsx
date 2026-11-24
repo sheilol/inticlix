@@ -1,0 +1,19 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Icon from '../components/Icon'
+import { t } from '../lib/i18n'
+
+export default function HomePage({ jobs, lang }) {
+  const navigate = useNavigate()
+  const hi = lang === 'hi'
+  const [search, setSearch] = useState('')
+  const filteredJobs = jobs.filter((job) => `${job.titleEn} ${job.titleHi} ${job.dept} ${job.deptHi || ''} ${job.location} ${job.locationHi || ''}`.toLowerCase().includes(search.toLowerCase()))
+
+  return (
+    <main>
+      <section className="hero-section worker-hero"><div className="hero-content"><div className="eyebrow"><span></span>{hi ? 'आपके हुनर की कद्र है' : 'GOOD WORK. GOOD PEOPLE.'}</div><h1>{hi ? <>आपके हुनर की<br/><em>अगली मंज़िल।</em></> : <>Your skills.<br/><em>Your next job.</em></>}</h1><p>{hi ? 'अपने हुनर के मुताबिक़ अच्छा और पक्का काम ढूँढें। पहले जानकारी भरें, फिर साइन इन करके CV अपलोड करें।' : 'Find steady, fair work that fits what you know. Share your details, sign in, and upload your CV to apply.'}</p><div className="hero-buttons"><button className="primary" onClick={() => document.querySelector('.jobs')?.scrollIntoView({ behavior: 'smooth' })}>{hi ? 'नौकरियाँ देखें' : t(lang, 'findJob')}<Icon name="arrow" size={18}/></button><span className="hero-reassurance">✓ {t(lang, 'freeToApply')}</span></div><div className="hero-trust"><span>☎</span><span><b>{t(lang, 'realPeople')}</b><small>{t(lang, 'callAbout')}</small></span></div></div><div className="hero-art"><div className="orbit orbit-one"></div><div className="orbit orbit-two"></div><div className="portrait"><div className="portrait-head"></div><div className="portrait-body"></div><div className="portrait-arm"></div></div><div className="art-badge"><div className="badge-icon">✓</div><div><b>{hi ? 'नई शुरुआत करें' : 'Make your move'}</b><span>{hi ? 'आपके लिए सही काम' : 'Work that works for you'}</span></div></div></div></section>
+      <section className="jobs"><div className="section-heading"><div><span className="overline">{t(lang, 'jobsNearYou')}</span><h2>{t(lang, 'openings')}</h2></div><span className="role-count">{jobs.length} {hi ? 'नौकरियाँ' : 'openings'}</span></div><label className="job-search"><Icon name="search" size={19}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t(lang, 'searchJobs')} aria-label={t(lang, 'searchJobs')}/></label><div className="job-grid">{filteredJobs.map((job) => { const title = hi ? job.titleHi : job.titleEn; return <article className="job-card" key={job.id}><div className={`job-symbol ${job.accent}`}><Icon name="briefcase"/></div><div className="job-main"><h3>{title}</h3><div className="job-meta"><span><Icon name="pin" size={14}/>{hi ? job.locationHi : job.location}</span><span><Icon name="clock" size={14}/>{hi ? 'पूरा समय' : job.type}</span></div><strong className="job-pay">{job.pay ? (hi ? job.pay.replace(' / month', ' / माह') : job.pay) : t(lang, 'payAtInterview')}</strong></div><button className="primary job-apply" onClick={() => navigate(`/apply?role=${encodeURIComponent(job.titleEn)}`)} aria-label={`${title} — ${t(lang, 'apply')}`}>{t(lang, 'apply')}<Icon name="arrow" size={16}/></button></article> })}</div>{!filteredJobs.length && <p className="empty-jobs">{t(lang, 'noSearchResults')}</p>}</section>
+      <section className="process"><div><span className="overline">{t(lang, 'threeSteps')}</span><h2>{hi ? <>पहली कॉल से<br/>काम के पहले दिन तक आसान</> : <>Simple from first call<br/>to first day.</>}</h2><p className="process-intro">{t(lang, 'noComplicatedForms')}</p></div><div className="steps"><div><b>01</b><h3>{t(lang, 'pickJob')}</h3><p>{t(lang, 'chooseMatchingJob')}</p></div><div><b>02</b><h3>{t(lang, 'tellUs')}</h3><p>{t(lang, 'shareDetails')}</p></div><div><b>03</b><h3>{t(lang, 'weCall')}</h3><p>{t(lang, 'nextSteps')}</p></div></div></section>
+    </main>
+  )
+}
